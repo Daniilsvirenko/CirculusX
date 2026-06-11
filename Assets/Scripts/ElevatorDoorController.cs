@@ -9,12 +9,19 @@ public class ElevatorDoorController : MonoBehaviour
 
     public float skipSecondsAtStart = 0f; // Укажите здесь задержку (в секундах), которую нужно пропустить
     public float stopAnimationAtSecond = 1.5f; // Укажите здесь секунду, на которой двери максимально открыты
+    public bool openOnStart = false; // Поставьте галочку, чтобы лифт открывался сам в начале игры
 
     void Start()
     {
         anim = GetComponent<Animation>();
         anim.playAutomatically = false;
         anim.wrapMode = WrapMode.Once;
+
+        // Если это начальный лифт, открываем двери сразу при запуске
+        if (openOnStart)
+        {
+            OpenDoors();
+        }
     }
 
     void Update()
