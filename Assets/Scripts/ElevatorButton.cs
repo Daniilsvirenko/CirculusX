@@ -8,9 +8,15 @@ public class ElevatorButton : MonoBehaviour, IInteractable
 
     public void Interact()
     {
+        // Обновляем точку спавна так, чтобы она стала там, где игрок стоит прямо сейчас.
+        // Теперь при переходе на следующий этаж (или при рестарте) игрок останется в этом же лифте!
+        if (GameManager.Instance != null && GameManager.Instance.player != null && GameManager.Instance.spawnPoint != null)
+        {
+            GameManager.Instance.spawnPoint.position = GameManager.Instance.player.position;
+            GameManager.Instance.spawnPoint.rotation = GameManager.Instance.player.rotation;
+        }
+
         // Tell the GameManager what the player chose
-        // If they chose the Start Elevator, it means they suspect an anomaly (true)
-        // If they chose the End Elevator, they think it's normal (false)
         GameManager.Instance.MakeDecision(isStartElevator);
     }
 }
