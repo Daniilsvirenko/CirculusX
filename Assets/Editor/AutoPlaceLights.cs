@@ -18,9 +18,9 @@ public class AutoPlaceLights : EditorWindow
         int count = 0;
         foreach (Transform child in parentObj.transform)
         {
-            // Проверяем, нет ли уже источника света в дочерних объектах
-            Light existingLight = child.GetComponentInChildren<Light>();
-            if (existingLight == null)
+            // Проверяем, нет ли уже созданного нами источника света
+            Transform existingLightTransform = child.Find("Point Light");
+            if (existingLightTransform == null)
             {
                 GameObject lightGo = new GameObject("Point Light");
                 lightGo.transform.SetParent(child);

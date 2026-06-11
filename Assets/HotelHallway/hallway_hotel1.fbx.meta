@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 598f3d4c0ca523a4191c45ce97855828
+guid: 0ec18b4b57ffff9478327f212977cb52
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -8,62 +8,62 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: carpet
-    second: {fileID: 2100000, guid: 9fc6e9d865735d849b5792c53970fc74, type: 2}
+    second: {fileID: 2100000, guid: be900c2780c7ee7498ac6ff2333f69eb, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: ceiling
-    second: {fileID: 2100000, guid: 4ec0e6e1c05a4314d8183054fed57fe2, type: 2}
+    second: {fileID: 2100000, guid: aac6fa0a598a92c48b80c29292506886, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: door_frame
-    second: {fileID: 2100000, guid: 2b78ad87196a1b44189d4d2452709df4, type: 2}
+    second: {fileID: 2100000, guid: 5f636cda4407d5546bdc728c6627e14c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: door_metal
-    second: {fileID: 2100000, guid: fd7a1e8d4ffc6f242a409862173acb25, type: 2}
+    second: {fileID: 2100000, guid: fa193147c3c199d4fa412bdba148c61d, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: door_wood
-    second: {fileID: 2100000, guid: 96c9c885b50b5e843babcd7970b50e4c, type: 2}
+    second: {fileID: 2100000, guid: 9dc4e0cb48446e8449189d5abca6626c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: exitSign_light
-    second: {fileID: 2100000, guid: d90e47adda1a78040814301f28bea4e1, type: 2}
+    second: {fileID: 2100000, guid: b392e790729da3444b2e215f8f026d79, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: exitSign_plastic
-    second: {fileID: 2100000, guid: 68ad12479fff6ed4cb1b1d00a6a79ed5, type: 2}
+    second: {fileID: 2100000, guid: 56c952cdc795def40bc4658bb53e2454, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: floor_bordes
-    second: {fileID: 2100000, guid: 90ab423c550253b4eb97cccd912103fe, type: 2}
+    second: {fileID: 2100000, guid: 548c4d93930a67d45a3c258cbf001ce5, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: light_cover
-    second: {fileID: 2100000, guid: bc070c14c9d766946a167ee8be1156fb, type: 2}
+    second: {fileID: 2100000, guid: 96674b007aee6534b9be14cb61c05cc8, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: metal_lights
-    second: {fileID: 2100000, guid: cbfaa38b79f50ee42b303f001d3049c3, type: 2}
+    second: {fileID: 2100000, guid: 605262a4f3bf6074097ea15685089458, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: tables
-    second: {fileID: 2100000, guid: 0ae8576fd238f9e4b9fc5105287f1438, type: 2}
+    second: {fileID: 2100000, guid: 093bbe530dce3f84aa89378027b347d6, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: walls
-    second: {fileID: 2100000, guid: 3a113fdc68d0e1a4b8b5db6c95ff7a9b, type: 2}
+    second: {fileID: 2100000, guid: 078f7cb281142ac46996565c081dcc25, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -95,18 +95,18 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
-    importPhysicalCameras: 1
+    importPhysicalCameras: 0
     importVisibility: 1
     importBlendShapes: 1
-    importCameras: 1
-    importLights: 1
+    importCameras: 0
+    importLights: 0
     nodeNameCollisionStrategy: 1
     fileIdsGeneration: 2
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1
