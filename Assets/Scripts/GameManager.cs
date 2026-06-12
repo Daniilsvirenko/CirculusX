@@ -63,24 +63,53 @@ public class GameManager : MonoBehaviour
     // Logic to create an anomaly
     private void GenerateFloorState()
     {
-        // Reset everything to NORMAL first
-        if (currentActiveAnomalyObject != null)
+        // 1. RESET PHASE: Bring everything back to its natural "Normal Floor" state
+        foreach (GameObject obj in anomalyObjects)
         {
-            currentActiveAnomalyObject.SetActive(true);
-            currentActiveAnomalyObject = null;
+            Anomaly anomalyScript = obj.GetComponent<Anomaly>();
+            if (anomalyScript != null)
+            {
+                // If its anomaly state is to HIDE, its normal state is ACTIVE (true)
+                // If its anomaly state is to SHOW, its normal state is INACTIVE (false)
+                if (anomalyScript.behavior == Anomaly.AnomalyBehavior.HideWhenAnomalyPresent)
+                {
+                    obj.SetActive(true);
+                }
+                else if (anomalyScript.behavior == Anomaly.AnomalyBehavior.ShowWhenAnomalyPresent)
+                {
+                    obj.SetActive(false);
+                }
+            }
         }
+
+        currentActiveAnomalyObject = null;
 
         // Decide if this floor has an anomaly (Never on floor 10)
         isAnomalyPresentOnCurrentFloor = (currentFloor != 10) && (Random.value > 0.5f);
 
-        // If an anomaly should exist, pick a random object to hide
+        // 2. ANOMALY PHASE: If an anomaly should exist, pick one and apply its specific rule
         if (isAnomalyPresentOnCurrentFloor && anomalyObjects.Count > 0)
         {
             int randomIndex = Random.Range(0, anomalyObjects.Count);
             currentActiveAnomalyObject = anomalyObjects[randomIndex];
 
-            currentActiveAnomalyObject.SetActive(false);
-            Debug.Log($"Anomaly generated! Hiding object: {currentActiveAnomalyObject.name}");
+            Anomaly anomalyScript = currentActiveAnomalyObject.GetComponent<Anomaly>();
+
+            if (anomalyScript != null)
+            {
+                if (anomalyScript.behavior == Anomaly.AnomalyBehavior.HideWhenAnomalyPresent)
+                {
+                    // Example: A normal ceiling light disappears
+                    currentActiveAnomalyObject.SetActive(false);
+                    Debug.Log($"Anomaly generated! Hiding normal object: {currentActiveAnomalyObject.name}");
+                }
+                else if (anomalyScript.behavior == Anomaly.AnomalyBehavior.ShowWhenAnomalyPresent)
+                {
+                    // Example: Footprints suddenly appear on the ground
+                    currentActiveAnomalyObject.SetActive(true);
+                    Debug.Log($"Anomaly generated! Showing extra object: {currentActiveAnomalyObject.name}");
+                }
+            }
         }
         else
         {
@@ -133,5 +162,24 @@ public class GameManager : MonoBehaviour
             case 1: return "I";
             default: return number.ToString();
         }
+    }
+
+    // Initialize the first floor state when the game kicks off
+    private void Start()
+    {
+        // Find the AnomalyManager in the scene
+        AnomalyManager anomalyManager = FindObjectOfType<AnomalyManager>();
+
+        if (anomalyManager != null && anomalyManager.allAnomalies != null)
+        {
+            foreach (GameObject anomalyObj in anomalyManager.allAnomalies)
+            {
+                // Automatically register every anomaly from the manager's list
+                RegisterAnomalyObject(anomalyObj);
+            }
+        }
+
+        // Generate the floor state
+        GenerateFloorState();
     }
 }
