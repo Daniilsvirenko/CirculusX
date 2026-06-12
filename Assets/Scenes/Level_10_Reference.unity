@@ -1323,6 +1323,75 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
   interactRange: 3
+--- !u!1001 &379491082
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 449358722276238255}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.613
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.562
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 5.873
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.47727427
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.47727418
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.52173686
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.52173686
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -95.097
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
+      propertyPath: m_Name
+      value: Cuckoo Clock
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
 --- !u!1 &385291067
 GameObject:
   m_ObjectHideFlags: 0
@@ -5003,6 +5072,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0.1, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!4 &2066880990 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 98d9916a09a42408196393d95f36ee5d, type: 3}
+  m_PrefabInstance: {fileID: 379491082}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2072089483
 GameObject:
   m_ObjectHideFlags: 0
@@ -8241,6 +8315,7 @@ Transform:
   - {fileID: 7597366970890896045}
   - {fileID: 6704294895986023259}
   - {fileID: 2133774481806910154}
+  - {fileID: 2066880990}
   m_Father: {fileID: 543450653293003620}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &451729461765756795
