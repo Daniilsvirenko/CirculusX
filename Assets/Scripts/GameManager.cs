@@ -97,6 +97,13 @@ public class GameManager : MonoBehaviour
         player.rotation = spawnPoint.rotation;
 
         if (cc != null) cc.enabled = true;
+
+        // Reset all elevator doors so they act like the beginning of the game
+        ElevatorDoorController[] allDoors = FindObjectsOfType<ElevatorDoorController>();
+        foreach (ElevatorDoorController door in allDoors)
+        {
+            door.ResetDoors();
+        }
     }
 
     // Updates the TMPro text on the elevator wall

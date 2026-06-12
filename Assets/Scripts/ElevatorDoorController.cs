@@ -52,4 +52,27 @@ public class ElevatorDoorController : MonoBehaviour
             anim[anim.clip.name].speed = 1; // Убеждаемся, что скорость нормальная
         }
     }
+
+    public void ResetDoors()
+    {
+        if (anim != null && anim.clip != null)
+        {
+            // Сбрасываем анимацию в самое начало (двери закрыты)
+            anim.Stop();
+            anim.Rewind();
+            anim.Play();
+            anim[anim.clip.name].time = 0;
+            anim.Sample();
+            anim.Stop();
+
+            isPlaying = false;
+            hasOpened = false;
+
+            // Если это начальный лифт, он снова должен открыться сам
+            if (openOnStart)
+            {
+                OpenDoors();
+            }
+        }
+    }
 }
