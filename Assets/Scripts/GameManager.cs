@@ -90,25 +90,55 @@ public class GameManager : MonoBehaviour
         // 2. ANOMALY PHASE: If an anomaly should exist, pick one and apply its specific rule
         if (isAnomalyPresentOnCurrentFloor && anomalyObjects.Count > 0)
         {
-            int randomIndex = Random.Range(0, anomalyObjects.Count);
-            currentActiveAnomalyObject = anomalyObjects[randomIndex];
-
-            Anomaly anomalyScript = currentActiveAnomalyObject.GetComponent<Anomaly>();
-
-            if (anomalyScript != null)
+            // Filter anomalies based on the current floor's difficulty rule
+            List<GameObject> validAnomalies = new List<GameObject>();
+            foreach (GameObject obj in anomalyObjects)
             {
-                if (anomalyScript.behavior == Anomaly.AnomalyBehavior.HideWhenAnomalyPresent)
+                Anomaly anomalyScript = obj.GetComponent<Anomaly>();
+                if (anomalyScript != null)
                 {
-                    // Example: A normal ceiling light disappears
-                    currentActiveAnomalyObject.SetActive(false);
-                    Debug.Log($"Anomaly generated! Hiding normal object: {currentActiveAnomalyObject.name}");
+                    if ((currentFloor >= 7 && currentFloor <= 9) && anomalyScript.type == Anomaly.AnomalyType.Simple)
+                    {
+                        validAnomalies.Add(obj);
+                    }
+                    else if ((currentFloor >= 4 && currentFloor <= 6) && anomalyScript.type == Anomaly.AnomalyType.Difficult)
+                    {
+                        validAnomalies.Add(obj);
+                    }
+                    else if ((currentFloor >= 1 && currentFloor <= 3) && anomalyScript.type == Anomaly.AnomalyType.Disturbing)
+                    {
+                        validAnomalies.Add(obj);
+                    }
                 }
-                else if (anomalyScript.behavior == Anomaly.AnomalyBehavior.ShowWhenAnomalyPresent)
+            }
+
+            if (validAnomalies.Count > 0)
+            {
+                int randomIndex = Random.Range(0, validAnomalies.Count);
+                currentActiveAnomalyObject = validAnomalies[randomIndex];
+
+                Anomaly anomalyScript = currentActiveAnomalyObject.GetComponent<Anomaly>();
+
+                if (anomalyScript != null)
                 {
-                    // Example: Footprints suddenly appear on the ground
-                    currentActiveAnomalyObject.SetActive(true);
-                    Debug.Log($"Anomaly generated! Showing extra object: {currentActiveAnomalyObject.name}");
+                    if (anomalyScript.behavior == Anomaly.AnomalyBehavior.HideWhenAnomalyPresent)
+                    {
+                        // Example: A normal ceiling light disappears
+                        currentActiveAnomalyObject.SetActive(false);
+                        Debug.Log($"Anomaly generated! Hiding normal object: {currentActiveAnomalyObject.name}");
+                    }
+                    else if (anomalyScript.behavior == Anomaly.AnomalyBehavior.ShowWhenAnomalyPresent)
+                    {
+                        // Example: Footprints suddenly appear on the ground
+                        currentActiveAnomalyObject.SetActive(true);
+                        Debug.Log($"Anomaly generated! Showing extra object: {currentActiveAnomalyObject.name}");
+                    }
                 }
+            }
+            else
+            {
+                isAnomalyPresentOnCurrentFloor = false;
+                Debug.Log("Floor is normal. No valid anomalies for this difficulty level.");
             }
         }
         else
