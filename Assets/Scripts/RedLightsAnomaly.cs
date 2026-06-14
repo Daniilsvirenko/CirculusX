@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 public class RedLightsAnomaly : MonoBehaviour
 {
-    [Header("Настройки")]
-    [Tooltip("Перетащите сюда объект lights.001. Если оставить пустым, скрипт попытается найти его по имени.")]
+    [Header("Settings")]
+    [Tooltip("Drag the lights.001 object here. If left empty, the script will try to find it by name.")]
     [SerializeField] private Transform lightsParent;
     [SerializeField] private Color anomalyColor = Color.red;
 
-    // Словарь для хранения оригинальных цветов каждого источника света
+    // Dictionary to store the original colors of each light source
     private Dictionary<Light, Color> originalColors = new Dictionary<Light, Color>();
     private bool isInitialized = false;
 
@@ -16,7 +16,7 @@ public class RedLightsAnomaly : MonoBehaviour
     {
         if (isInitialized) return;
 
-        // Попытка найти объект lights.001 автоматически, если он не назначен в инспекторе
+        // Attempt to find the lights.001 object automatically if it is not assigned in the inspector
         if (lightsParent == null)
         {
             GameObject foundLights = GameObject.Find("lights.001");
@@ -26,16 +26,16 @@ public class RedLightsAnomaly : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("[RedLightsAnomaly] Не удалось найти объект 'lights.001' на сцене! Назначьте его вручную.");
+                Debug.LogWarning("[RedLightsAnomaly] Could not find the 'lights.001' object in the scene! Assign it manually.");
                 return;
             }
         }
 
-        // Собираем все компоненты Light внутри lights.001 (включая неактивные)
+        // Collect all Light components inside lights.001 (including inactive ones)
         Light[] allLights = lightsParent.GetComponentsInChildren<Light>(true);
         foreach (Light lightComponent in allLights)
         {
-            // Нам нужны только Point Light
+            // We only need Point Lights
             if (lightComponent.type == LightType.Point)
             {
                 originalColors[lightComponent] = lightComponent.color;
@@ -45,12 +45,12 @@ public class RedLightsAnomaly : MonoBehaviour
         isInitialized = true;
     }
 
-    // Вызывается, когда GameManager выбирает эту аномалию и включает её
+    // Called when the GameManager selects this anomaly and enables it
     private void OnEnable()
     {
         InitializeLights();
 
-        // Меняем цвет всех сохранённых ламп на красный
+        // Change the color of all saved lights to red
         foreach (var kvp in originalColors)
         {
             if (kvp.Key != null)
@@ -59,13 +59,13 @@ public class RedLightsAnomaly : MonoBehaviour
             }
         }
 
-        Debug.Log("[RedLightsAnomaly] Свет изменён на кроваво-красный!");
+        Debug.Log("[RedLightsAnomaly] Light changed to blood red!");
     }
 
-    // Вызывается, когда игрок проходит этаж и GameManager выключает аномалию (Reset Phase)
+    // Called when the player passes the floor and GameManager disables the anomaly (Reset Phase)
     private void OnDisable()
     {
-        // Возвращаем всем лампам их оригинальный цвет
+        // Return all lights to their original color
         foreach (var kvp in originalColors)
         {
             if (kvp.Key != null)
