@@ -17,6 +17,11 @@ public class PlayerMovement : MonoBehaviour
     public AudioClip[] footstepSounds; // Array of multiple sounds for variety
     public float stepDistance = 1.0f; // Distance in meters player must travel to trigger a step
 
+    // --- New Phantom Footstep Reference ---
+    [Header("Anomaly Settings")]
+    public FootstepEchoController echoController;
+    // --------------------------------------
+
     private float accumulatedDistance = 0f;
     private Vector3 lastPosition; // Used to track distance moved since last frame
 
@@ -122,6 +127,12 @@ public class PlayerMovement : MonoBehaviour
             footstepAudioSource.pitch = Random.Range(0.9f, 1.1f);
 
             footstepAudioSource.PlayOneShot(footstepSounds[randomIndex]);
+
+            // --- Trigger the stalker echo to schedule a trailing step ---
+            if (echoController != null && echoController.gameObject.activeInHierarchy)
+            {
+                echoController.RegisterPlayerStep();
+            }
         }
     }
 }
