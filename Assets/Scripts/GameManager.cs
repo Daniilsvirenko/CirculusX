@@ -10,6 +10,10 @@ public class GameManager : MonoBehaviour
     public int currentFloor = 10;
     public bool isAnomalyPresentOnCurrentFloor = false;
     [Range(0f, 1f)] public float anomalyProbability = 0.5f;
+    [Tooltip("How much the probability increases after a normal floor (e.g., 0.15 = +15%)")]
+    [Range(0f, 1f)] public float probabilityIncreasePerNormalFloor = 0.15f;
+
+    private float currentDynamicProbability;
 
     [Header("Player & References")]
     public Transform player;
@@ -25,6 +29,7 @@ public class GameManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
+        currentDynamicProbability = anomalyProbability;
         UpdateFloorDisplay();
     }
 
@@ -53,6 +58,7 @@ public class GameManager : MonoBehaviour
         else
         {
             currentFloor = 10;
+            currentDynamicProbability = anomalyProbability; // Reset probability on failure
             Debug.Log("Wrong decision! Resetting back to Floor 10.");
         }
 
@@ -86,7 +92,14 @@ public class GameManager : MonoBehaviour
         currentActiveAnomalyObject = null;
 
         // Decide if this floor has an anomaly (Never on floor 10)
-        isAnomalyPresentOnCurrentFloor = (currentFloor != 10) && (Random.value <= anomalyProbability);
+        if (currentFloor == 10)
+        {
+            isAnomalyPresentOnCurrentFloor = false;
+        }
+        else
+        {
+            isAnomalyPresentOnCurrentFloor = (Random.value <= currentDynamicProbability);
+        }
 
         Debug.Log($"\n--- GENERATING FLOOR {currentFloor} ---");
 
@@ -117,6 +130,9 @@ public class GameManager : MonoBehaviour
 
             if (validAnomalies.Count > 0)
             {
+                // Anomaly spawned! Reset probability back to base
+                currentDynamicProbability = anomalyProbability;
+
                 int randomIndex = Random.Range(0, validAnomalies.Count);
                 currentActiveAnomalyObject = validAnomalies[randomIndex];
 
@@ -141,12 +157,17 @@ public class GameManager : MonoBehaviour
             else
             {
                 isAnomalyPresentOnCurrentFloor = false;
-                Debug.Log($"[FLOOR {currentFloor}] NORMAL: No valid anomalies for this difficulty level.");
+                currentDynamicProbability = Mathf.Clamp01(currentDynamicProbability + probabilityIncreasePerNormalFloor);
+                Debug.Log($"[FLOOR {currentFloor}] NORMAL: No valid anomalies for this difficulty level. Next chance: {currentDynamicProbability * 100}%");
             }
         }
         else
         {
-            Debug.Log($"[FLOOR {currentFloor}] NORMAL: No anomaly generated (lucky).");
+            if (currentFloor != 10)
+            {
+                currentDynamicProbability = Mathf.Clamp01(currentDynamicProbability + probabilityIncreasePerNormalFloor);
+            }
+            Debug.Log($"[FLOOR {currentFloor}] NORMAL: No anomaly generated (lucky). Next chance: {currentDynamicProbability * 100}%");
         }
     }
 
