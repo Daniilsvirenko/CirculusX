@@ -13,12 +13,6 @@ public class Anomaly : MonoBehaviour
     [Header("Description")]
     public string description;
 
-    // Auto-register with the GameManager when the game starts
-    protected virtual void Awake()
-    {
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.RegisterAnomalyObject(this.gameObject);
-        }
-    }
+    // (Убрана автоматическая регистрация Awake). 
+    // Теперь аномалии регистрируются ТОЛЬКО если они добавлены в AnomalyManager!
 }
