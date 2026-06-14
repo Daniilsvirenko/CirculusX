@@ -6,11 +6,11 @@ public class Anomaly : MonoBehaviour
     // Defines how this anomaly behaves when active
     public enum AnomalyBehavior { HideWhenAnomalyPresent, ShowWhenAnomalyPresent }
 
-    [Header("GDD Kategorie")]
+    [Header("GDD Category")]
     public AnomalyType type;
     public AnomalyBehavior behavior;
 
-    [Header("Beschreibung")]
+    [Header("Description")]
     public string description;
 
     // Auto-register with the GameManager when the game starts

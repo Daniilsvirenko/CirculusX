@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     [Header("Game State")]
     public int currentFloor = 10;
     public bool isAnomalyPresentOnCurrentFloor = false;
+    [Range(0f, 1f)] public float anomalyProbability = 0.5f;
 
     [Header("Player & References")]
     public Transform player;
@@ -85,7 +86,7 @@ public class GameManager : MonoBehaviour
         currentActiveAnomalyObject = null;
 
         // Decide if this floor has an anomaly (Never on floor 10)
-        isAnomalyPresentOnCurrentFloor = (currentFloor != 10) && (Random.value > 0.5f);
+        isAnomalyPresentOnCurrentFloor = (currentFloor != 10) && (Random.value <= anomalyProbability);
 
         Debug.Log($"\n--- GENERATING FLOOR {currentFloor} ---");
 
