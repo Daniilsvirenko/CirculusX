@@ -3209,16 +3209,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e355f7aa0adca22499b2aab0b051f65d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  walkSpeed: 10
+  walkSpeed: 4
+  runSpeed: 8
   gravity: -9.81
   mouseSensitivity: 0.3
   playerCamera: {fileID: 330585546}
+  walkBobSpeed: 14
+  walkBobAmount: 0.03
+  runBobSpeed: 20
+  runBobAmount: 0.06
   footstepAudioSource: {fileID: 530296763}
   footstepSounds:
   - {fileID: 8300000, guid: b993df4a93c1d304ab19d8b2eb88c9a5, type: 3}
   - {fileID: 8300000, guid: 5c9bdbce37b06a24fa6ea793bcfd1907, type: 3}
   - {fileID: 8300000, guid: 0909de896e9029541b92ae05fe15e4b6, type: 3}
   stepDistance: 1.5
+  runStepDistance: 1.5
   echoController: {fileID: 1908084731}
 --- !u!82 &530296763
 AudioSource:

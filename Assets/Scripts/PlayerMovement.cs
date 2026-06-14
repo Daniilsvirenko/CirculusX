@@ -6,16 +6,26 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float walkSpeed = 3.0f;
+    public float runSpeed = 8.0f;
     public float gravity = -9.81f;
 
     [Header("Look Settings")]
     public float mouseSensitivity = 0.3f;
     public Transform playerCamera;
 
+    [Header("Head Bobbing")]
+    public float walkBobSpeed = 10f;
+    public float walkBobAmount = 0.05f;
+    public float runBobSpeed = 15f;
+    public float runBobAmount = 0.1f;
+    private float defaultCameraY = 0f;
+    private float bobTimer = 0f;
+
     [Header("Audio Settings")]
     public AudioSource footstepAudioSource;
     public AudioClip[] footstepSounds; // Array of multiple sounds for variety
     public float stepDistance = 1.0f; // Distance in meters player must travel to trigger a step
+    public float runStepDistance = 1.5f; // Позволяет шагам быть чуть реже при быстром беге
 
     // --- New Phantom Footstep Reference ---
     [Header("Anomaly Settings")]
@@ -57,6 +67,11 @@ public class PlayerMovement : MonoBehaviour
 
         // Initialize lastPosition to prevent instant massive distance on frame 1
         lastPosition = transform.position;
+
+        if (playerCamera != null)
+        {
+            defaultCameraY = playerCamera.localPosition.y;
+        }
     }
 
     void Update()
@@ -71,9 +86,13 @@ public class PlayerMovement : MonoBehaviour
         playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * mouseX);
 
+        // --- Run Input Check ---
+        bool isRunning = Keyboard.current != null && Keyboard.current.leftShiftKey.isPressed;
+        float currentSpeed = isRunning ? runSpeed : walkSpeed;
+
         // --- Movement ---
         Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
-        controller.Move(move * walkSpeed * Time.deltaTime);
+        controller.Move(move * currentSpeed * Time.deltaTime);
 
         // --- Gravity ---
         if (controller.isGrounded && velocity.y < 0)
@@ -83,6 +102,30 @@ public class PlayerMovement : MonoBehaviour
 
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+
+        // Check if player is actively inputting movement commands
+        bool isTryingToMove = moveInput.sqrMagnitude > 0.1f;
+
+        // --- Head Bobbing (Тряска камеры при ходьбе/беге) ---
+        if (controller.isGrounded && isTryingToMove && playerCamera != null)
+        {
+            float bobSpeed = isRunning ? runBobSpeed : walkBobSpeed;
+            float bobAmount = isRunning ? runBobAmount : walkBobAmount;
+            
+            bobTimer += Time.deltaTime * bobSpeed;
+            playerCamera.localPosition = new Vector3(
+                playerCamera.localPosition.x,
+                defaultCameraY + Mathf.Sin(bobTimer) * bobAmount,
+                playerCamera.localPosition.z);
+        }
+        else if (playerCamera != null)
+        {
+            bobTimer = 0f;
+            playerCamera.localPosition = new Vector3(
+                playerCamera.localPosition.x,
+                Mathf.Lerp(playerCamera.localPosition.y, defaultCameraY, Time.deltaTime * 5f),
+                playerCamera.localPosition.z);
+        }
 
         // --- DISTANCE-BASED FOOTSTEP AUDIO ---
 
@@ -95,16 +138,15 @@ public class PlayerMovement : MonoBehaviour
         // Update lastPosition for the next frame
         lastPosition = transform.position;
 
-        // 2. Check if player is actively inputting movement commands
-        bool isTryingToMove = moveInput.sqrMagnitude > 0.1f;
-
         // If grounded, trying to move, AND physically moved a measurable amount
         if (controller.isGrounded && isTryingToMove && distanceMovedThisFrame > 0.001f)
         {
             accumulatedDistance += distanceMovedThisFrame;
+            
+            float currentStepDistance = isRunning ? runStepDistance : stepDistance;
 
             // Trigger footstep sound when threshold is reached
-            if (accumulatedDistance >= stepDistance)
+            if (accumulatedDistance >= currentStepDistance)
             {
                 PlayFootstep();
                 accumulatedDistance = 0f; // Reset for the next step
@@ -113,14 +155,15 @@ public class PlayerMovement : MonoBehaviour
         else if (!isTryingToMove)
         {
             // Pre-load the distance slightly so the very first step plays quickly when moving starts
-            accumulatedDistance = stepDistance * 0.8f;
+            float targetDistance = (isRunning ? runStepDistance : stepDistance) * 0.8f;
+            accumulatedDistance = targetDistance;
         }
     }
 
     private void PlayFootstep()
     {
         // Ensure sounds exist and AudioSource is assigned
-        if (footstepSounds.Length > 0 && footstepAudioSource != null)
+        if (footstepSounds != null && footstepSounds.Length > 0 && footstepAudioSource != null)
         {
             // Pick random sound and slightly alter pitch for realism
             int randomIndex = Random.Range(0, footstepSounds.Length);
