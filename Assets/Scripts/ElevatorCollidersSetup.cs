@@ -19,21 +19,16 @@ public class ElevatorCollidersSetup : MonoBehaviour
 
             if (renderer != null && existingCollider == null)
             {
-                // For doors, we use BoxCollider because it's cheaper and safer for moving objects.
-                // For walls/floors (Plane, Wall, ElevatorCage), we use MeshCollider for exact fit.
                 string childName = child.name.ToLower();
 
-                if (childName.Contains("door"))
-                {
-                    child.gameObject.AddComponent<BoxCollider>();
-                }
-                else if (childName.Contains("button"))
+                if (childName.Contains("button"))
                 {
                     BoxCollider bc = child.gameObject.AddComponent<BoxCollider>();
-                    bc.size = bc.size * 3f; // Увеличиваем "хитбокс" кнопки в 3 раза
+                    bc.size = bc.size * 3f; // Increase the button hitbox by 3 times
                 }
                 else
                 {
+                    // For doors, walls, and floors, we use MeshCollider for an exact fit to prevent invisible barriers.
                     MeshCollider mc = child.gameObject.AddComponent<MeshCollider>();
                     // Mesh colliders must NOT be convex if we want to walk inside them (like the cage)
                     mc.convex = false; 
