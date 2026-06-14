@@ -6,6 +6,15 @@ public class VanishingWoman : MonoBehaviour
     [SerializeField] private GameObject womanModel;
     [SerializeField] private AudioSource optionalScareSound;
 
+    // Reset the model when the GameManager activates this anomaly again
+    private void OnEnable()
+    {
+        if (womanModel != null)
+        {
+            womanModel.SetActive(true);
+        }
+    }
+
     // This triggers automatically when an object enters our Box Collider
     private void OnTriggerEnter(Collider other)
     {
