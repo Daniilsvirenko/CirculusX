@@ -87,6 +87,8 @@ public class GameManager : MonoBehaviour
         // Decide if this floor has an anomaly (Never on floor 10)
         isAnomalyPresentOnCurrentFloor = (currentFloor != 10) && (Random.value > 0.5f);
 
+        Debug.Log($"\n--- ГЕНЕРАЦИЯ ЭТАЖА {currentFloor} ---");
+
         // 2. ANOMALY PHASE: If an anomaly should exist, pick one and apply its specific rule
         if (isAnomalyPresentOnCurrentFloor && anomalyObjects.Count > 0)
         {
@@ -125,25 +127,25 @@ public class GameManager : MonoBehaviour
                     {
                         // Example: A normal ceiling light disappears
                         currentActiveAnomalyObject.SetActive(false);
-                        Debug.Log($"Anomaly generated! Hiding normal object: {currentActiveAnomalyObject.name}");
+                        Debug.Log($"[ЭТАЖ {currentFloor}] АНОМАЛИЯ: Объект '{currentActiveAnomalyObject.name}' исчез (Сложность: {anomalyScript.type})");
                     }
                     else if (anomalyScript.behavior == Anomaly.AnomalyBehavior.ShowWhenAnomalyPresent)
                     {
                         // Example: Footprints suddenly appear on the ground
                         currentActiveAnomalyObject.SetActive(true);
-                        Debug.Log($"Anomaly generated! Showing extra object: {currentActiveAnomalyObject.name}");
+                        Debug.Log($"[ЭТАЖ {currentFloor}] АНОМАЛИЯ: Объект '{currentActiveAnomalyObject.name}' появился (Сложность: {anomalyScript.type})");
                     }
                 }
             }
             else
             {
                 isAnomalyPresentOnCurrentFloor = false;
-                Debug.Log("Floor is normal. No valid anomalies for this difficulty level.");
+                Debug.Log($"[ЭТАЖ {currentFloor}] НОРМАЛЬНЫЙ: Нет доступных аномалий для этого уровня сложности.");
             }
         }
         else
         {
-            Debug.Log("Floor is normal. No anomalies.");
+            Debug.Log($"[ЭТАЖ {currentFloor}] НОРМАЛЬНЫЙ: Аномалия не сгенерировалась (повезло).");
         }
     }
 
