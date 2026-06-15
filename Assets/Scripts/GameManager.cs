@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     // List to hold all potential anomaly objects
     private List<GameObject> anomalyObjects = new List<GameObject>();
     private GameObject currentActiveAnomalyObject = null;
+    private GameObject lastActiveAnomalyObject = null; // Запоминаем последнюю аномалию
 
     private void Awake()
     {
@@ -59,6 +60,7 @@ public class GameManager : MonoBehaviour
         {
             currentFloor = 10;
             currentDynamicProbability = anomalyProbability; // Reset probability on failure
+            lastActiveAnomalyObject = null; // Сбрасываем историю при проигрыше
             Debug.Log("Wrong decision! Resetting back to Floor 10.");
         }
 
@@ -70,6 +72,12 @@ public class GameManager : MonoBehaviour
     // Logic to create an anomaly
     private void GenerateFloorState()
     {
+        // Запоминаем последнюю фактическую аномалию (игнорируем нормальные этажи без аномалий)
+        if (currentActiveAnomalyObject != null)
+        {
+            lastActiveAnomalyObject = currentActiveAnomalyObject;
+        }
+
         // 1. RESET PHASE: Bring everything back to its natural "Normal Floor" state
         foreach (GameObject obj in anomalyObjects)
         {
@@ -110,6 +118,12 @@ public class GameManager : MonoBehaviour
             List<GameObject> validAnomalies = new List<GameObject>();
             foreach (GameObject obj in anomalyObjects)
             {
+                // ИСКЛЮЧАЕМ аномалию, которая была на предыдущем этаже
+                if (obj == lastActiveAnomalyObject)
+                {
+                    continue; // Пропускаем её
+                }
+
                 Anomaly anomalyScript = obj.GetComponent<Anomaly>();
                 if (anomalyScript != null)
                 {
