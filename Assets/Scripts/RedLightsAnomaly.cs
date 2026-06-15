@@ -11,6 +11,7 @@ public class RedLightsAnomaly : MonoBehaviour
     // Dictionary to store the original colors of each light source
     private Dictionary<Light, Color> originalColors = new Dictionary<Light, Color>();
     private bool isInitialized = false;
+    private bool hasTriggered = false; // Флаг, чтобы свет не менялся дважды
 
     private void InitializeLights()
     {
@@ -49,17 +50,32 @@ public class RedLightsAnomaly : MonoBehaviour
     private void OnEnable()
     {
         InitializeLights();
+        hasTriggered = false; // Сбрасываем триггер
+        // Свет больше не меняется мгновенно! Ждем OnTriggerEnter
+    }
 
-        // Change the color of all saved lights to red
-        foreach (var kvp in originalColors)
+    // Вызывается, когда объект с коллайдером-триггером пересекается с другим объектом
+    private void OnTriggerEnter(Collider other)
+    {
+        // Если уже сработало, игнорируем
+        if (hasTriggered) return;
+
+        // Проверяем, что в триггер вошел именно Игрок (проверь, чтобы у игрока был тег "Player")
+        if (other.CompareTag("Player"))
         {
-            if (kvp.Key != null)
-            {
-                kvp.Key.color = anomalyColor;
-            }
-        }
+            hasTriggered = true;
 
-        Debug.Log("[RedLightsAnomaly] Light changed to blood red!");
+            // Меняем цвета всех ламп на красный
+            foreach (var kvp in originalColors)
+            {
+                if (kvp.Key != null)
+                {
+                    kvp.Key.color = anomalyColor;
+                }
+            }
+
+            Debug.Log("[RedLightsAnomaly] Player entered trigger! Light changed to blood red!");
+        }
     }
 
     // Called when the player passes the floor and GameManager disables the anomaly (Reset Phase)
@@ -73,5 +89,8 @@ public class RedLightsAnomaly : MonoBehaviour
                 kvp.Key.color = kvp.Value;
             }
         }
+        
+        hasTriggered = false;
     }
 }
+
