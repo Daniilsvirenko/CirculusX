@@ -2769,7 +2769,6 @@ GameObject:
   m_Component:
   - component: {fileID: 498932670}
   - component: {fileID: 498932669}
-  - component: {fileID: 498932668}
   m_Layer: 0
   m_Name: Anomaly_DoorKnocking
   m_TagString: Untagged
@@ -2777,19 +2776,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &498932668
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 498932667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f91ec591c90628a479f339b7a4cbbeca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoundAnomaly
-  audioSource: {fileID: 1842965073}
 --- !u!114 &498932669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2802,7 +2788,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9852c63b41f66a34e8056f8dfb16360d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Anomaly
-  type: 1
+  type: 0
   behavior: 1
   description: 
 --- !u!4 &498932670
@@ -3209,15 +3195,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e355f7aa0adca22499b2aab0b051f65d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  walkSpeed: 4
-  runSpeed: 8
+  walkSpeed: 2.5
+  runSpeed: 4.5
   gravity: -9.81
   mouseSensitivity: 0.3
   playerCamera: {fileID: 330585546}
-  walkBobSpeed: 14
-  walkBobAmount: 0.03
-  runBobSpeed: 20
-  runBobAmount: 0.06
+  walkBobSpeed: 8
+  walkBobAmount: 0
+  runBobSpeed: 12
+  runBobAmount: 0.02
   footstepAudioSource: {fileID: 530296763}
   footstepSounds:
   - {fileID: 8300000, guid: b993df4a93c1d304ab19d8b2eb88c9a5, type: 3}
@@ -5432,7 +5418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9852c63b41f66a34e8056f8dfb16360d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Anomaly
-  type: 0
+  type: 1
   behavior: 1
   description: 
 --- !u!4 &1024571074
@@ -7337,6 +7323,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1504182748}
   - component: {fileID: 1504182749}
+  - component: {fileID: 1504182750}
   m_Layer: 0
   m_Name: Trigger_Zone
   m_TagString: Untagged
@@ -7380,6 +7367,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5, y: 5, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1504182750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1504182747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f91ec591c90628a479f339b7a4cbbeca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundAnomaly
+  audioSource: {fileID: 1842965073}
 --- !u!4 &1521581439 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2774220344278030320, guid: 9b2f5bd5828db4256866439222a1f16d, type: 3}
@@ -8537,7 +8537,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9852c63b41f66a34e8056f8dfb16360d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Anomaly
-  type: 1
+  type: 0
   behavior: 1
   description: 
 --- !u!1001 &1640116345
@@ -9512,7 +9512,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 8
+  MaxDistance: 15
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -10486,7 +10486,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9852c63b41f66a34e8056f8dfb16360d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Anomaly
-  type: 1
+  type: 0
   behavior: 1
   description: 
 --- !u!1 &1978690980
@@ -10519,7 +10519,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9852c63b41f66a34e8056f8dfb16360d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Anomaly
-  type: 0
+  type: 1
   behavior: 1
   description: 
 --- !u!114 &1978690982
