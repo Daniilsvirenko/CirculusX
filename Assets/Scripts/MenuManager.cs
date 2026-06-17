@@ -14,6 +14,8 @@ public class MenuManager : MonoBehaviour
     public GameObject menuPanel; 
     public GameObject startButton;
     public GameObject resumeButton;
+    public GameObject quitButton;
+    public GameObject titleText;
 
     [Header("Post Processing")]
     public Volume blurVolume;
@@ -64,6 +66,8 @@ public class MenuManager : MonoBehaviour
         if (menuPanel != null) menuPanel.SetActive(true);
         if (startButton != null) startButton.SetActive(true);
         if (resumeButton != null) resumeButton.SetActive(false);
+        if (quitButton != null) quitButton.SetActive(true);
+        if (titleText != null) titleText.SetActive(true);
         if (blurVolume != null) blurVolume.weight = 1f;
 
         UnlockCursor();
@@ -82,6 +86,16 @@ public class MenuManager : MonoBehaviour
         ResumeGame();
     }
 
+    // Call this from the OnClick event of the Quit Button
+    public void OnQuitButtonClicked()
+    {
+        Application.Quit();
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
+
     public void PauseGame()
     {
         IsPaused = true;
@@ -91,6 +105,8 @@ public class MenuManager : MonoBehaviour
         if (menuPanel != null) menuPanel.SetActive(true);
         if (startButton != null) startButton.SetActive(false);
         if (resumeButton != null) resumeButton.SetActive(true);
+        if (quitButton != null) quitButton.SetActive(true);
+        if (titleText != null) titleText.SetActive(false);
         if (blurVolume != null) blurVolume.weight = 1f;
 
         UnlockCursor();
