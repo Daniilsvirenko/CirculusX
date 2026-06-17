@@ -76,6 +76,9 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // Block all movement and camera look when paused
+        if (MenuManager.Instance != null && MenuManager.Instance.IsPaused) return;
+
         // --- Mouse Look ---
         float mouseX = lookInput.x * mouseSensitivity;
         float mouseY = lookInput.y * mouseSensitivity;
