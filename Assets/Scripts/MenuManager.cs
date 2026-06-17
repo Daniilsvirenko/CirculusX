@@ -106,7 +106,7 @@ public class MenuManager : MonoBehaviour
         if (startButton != null) startButton.SetActive(false);
         if (resumeButton != null) resumeButton.SetActive(true);
         if (quitButton != null) quitButton.SetActive(true);
-        if (titleText != null) titleText.SetActive(false);
+        if (titleText != null) titleText.SetActive(true);
         if (blurVolume != null) blurVolume.weight = 1f;
 
         UnlockCursor();
