@@ -68,10 +68,13 @@ Shader "Custom/UIHypnosisWater"
             };
 
             sampler2D _MainTex;
+            
+            CBUFFER_START(UnityPerMaterial)
             fixed4 _Color;
             float _Speed;
             float _Amount;
             float _Frequency;
+            CBUFFER_END
             
             // Глобальная переменная времени без паузы, которую мы передаем из MenuManager.cs
             float _GlobalUnscaledTime;
@@ -90,13 +93,24 @@ Shader "Custom/UIHypnosisWater"
             {
                 float2 uv = IN.texcoord;
                 
-                // Эффект воды/гипноза (используем _GlobalUnscaledTime чтобы работало на паузе)
+                // Эффект гипноза/воды на основе времени
                 float time = _GlobalUnscaledTime * _Speed;
+                
+                // Искажение координат
                 uv.x += sin(uv.y * _Frequency + time) * _Amount;
                 uv.y += cos(uv.x * _Frequency + time) * _Amount;
 
-                // Получаем цвет текстуры или UI Sprite
-                half4 color = tex2D(_MainTex, uv) * IN.color;
+                // Создаем красивый процедурный узор (плазма/волны), так как у нас нет текстуры!
+                float wave = sin(uv.x * 10.0 + time) + cos(uv.y * 10.0 + time);
+                
+                // Смешиваем базовый цвет (Tint) с нашей волной
+                half4 color = IN.color;
+                
+                // Добавляем переливание (осветляем и затемняем фон по форме волны)
+                color.rgb += wave * 0.05; 
+                
+                // Если вдруг добавите текстуру, она тоже будет искажаться
+                color *= tex2D(_MainTex, uv);
                 
                 return color;
             }
