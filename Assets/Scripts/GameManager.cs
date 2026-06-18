@@ -20,6 +20,18 @@ public class GameManager : MonoBehaviour
     public Transform spawnPoint;
     public TextMeshProUGUI floorDisplayText;
 
+    [Header("Level 0 - Delusional Corridor (Ending)")]
+    [Tooltip("Parent object containing the normal repeating hallway (hallway_hotel3 etc.). Gets disabled on Floor 0.")]
+    public GameObject mainHallway;
+    [Tooltip("Parent object containing the Delusional Corridor ending area. Stays disabled until Floor 0.")]
+    public GameObject level0Corridor;
+    [Tooltip("Spawn point used only inside the Delusional Corridor.")]
+    public Transform level0SpawnPoint;
+    [Tooltip("Controller that handles the fade-to-white and 'THE END' text.")]
+    public EndingUIController endingUI;
+
+    private bool isInLevel0 = false;
+
     // List to hold all potential anomaly objects
     private List<GameObject> anomalyObjects = new List<GameObject>();
     private GameObject currentActiveAnomalyObject = null;
@@ -45,6 +57,14 @@ public class GameManager : MonoBehaviour
 
     public void MakeDecision(bool guessedAnomaly)
     {
+        // Inside the Delusional Corridor the only elevator interaction is "give up"
+        // and give up always means: hard reset back to Floor 10.
+        if (isInLevel0)
+        {
+            GiveUpFromLevel0();
+            return;
+        }
+
         if (guessedAnomaly == isAnomalyPresentOnCurrentFloor)
         {
             currentFloor--;
@@ -52,7 +72,7 @@ public class GameManager : MonoBehaviour
 
             if (currentFloor <= 0)
             {
-                Debug.Log("YOU ESCAPED! (Win Screen)");
+                EnterLevel0();
                 return;
             }
         }
@@ -63,6 +83,65 @@ public class GameManager : MonoBehaviour
             lastActiveAnomalyObject = null; // Сбрасываем историю при проигрыше
             Debug.Log("Wrong decision! Resetting back to Floor 10.");
         }
+
+        UpdateFloorDisplay();
+        GenerateFloorState();
+        TeleportPlayerToStart();
+    }
+
+    // Called once the player correctly escapes Floor 1. Swaps the normal hallway
+    // for the Delusional Corridor ending area instead of generating another floor.
+    private void EnterLevel0()
+    {
+        isInLevel0 = true;
+        isAnomalyPresentOnCurrentFloor = false;
+
+        Debug.Log("Entering Floor 0 - Delusional Corridor.");
+
+        if (floorDisplayText != null)
+        {
+            floorDisplayText.text = "FLOOR 0";
+        }
+
+        if (mainHallway != null) mainHallway.SetActive(false);
+        if (level0Corridor != null) level0Corridor.SetActive(true);
+
+        TeleportPlayerTo(level0SpawnPoint);
+
+        // Reset elevator doors so the Level 0 elevator behaves like a fresh start
+        ElevatorDoorController[] allDoors = FindObjectsOfType<ElevatorDoorController>();
+        foreach (ElevatorDoorController door in allDoors)
+        {
+            door.ResetDoors();
+        }
+    }
+
+    // Player chose the exit door inside the Delusional Corridor -> real win ending
+    public void TriggerWinEnding()
+    {
+        if (!isInLevel0) return;
+
+        Debug.Log("Player escaped the loop. Triggering win ending.");
+
+        if (endingUI != null)
+        {
+            endingUI.PlayEnding();
+        }
+    }
+
+    // Player chose to go back to the start elevator inside the Delusional Corridor.
+    // This is a full reset, identical in spirit to a wrong decision.
+    private void GiveUpFromLevel0()
+    {
+        Debug.Log("Player gave up. Resetting back to Floor 10.");
+
+        isInLevel0 = false;
+        currentFloor = 10;
+        currentDynamicProbability = anomalyProbability;
+        lastActiveAnomalyObject = null;
+
+        if (level0Corridor != null) level0Corridor.SetActive(false);
+        if (mainHallway != null) mainHallway.SetActive(true);
 
         UpdateFloorDisplay();
         GenerateFloorState();
@@ -187,20 +266,20 @@ public class GameManager : MonoBehaviour
 
     private void TeleportPlayerToStart()
     {
+        TeleportPlayerTo(spawnPoint);
+    }
+
+    private void TeleportPlayerTo(Transform target)
+    {
+        if (target == null) return;
+
         CharacterController cc = player.GetComponent<CharacterController>();
         if (cc != null) cc.enabled = false;
 
-        player.position = spawnPoint.position;
-        player.rotation = spawnPoint.rotation;
+        player.position = target.position;
+        player.rotation = target.rotation;
 
         if (cc != null) cc.enabled = true;
-
-        // Reset all elevator doors so they act like the beginning of the game
-        ElevatorDoorController[] allDoors = FindObjectsOfType<ElevatorDoorController>();
-        foreach (ElevatorDoorController door in allDoors)
-        {
-            door.ResetDoors();
-        }
     }
 
     // Updates the TMPro text on the elevator wall
@@ -235,6 +314,8 @@ public class GameManager : MonoBehaviour
     // Initialize the first floor state when the game kicks off
     private void Start()
     {
+        if (level0Corridor != null) level0Corridor.SetActive(false);
+
         // Find the AnomalyManager in the scene
         AnomalyManager anomalyManager = FindObjectOfType<AnomalyManager>();
 
