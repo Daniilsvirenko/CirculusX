@@ -39,6 +39,16 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 velocity;
     private float xRotation = 0f;
 
+    // Independent from MenuManager.IsPaused. Used for moments like the
+    // ending sequence where movement/look must be disabled without
+    // opening the pause menu or touching Time.timeScale.
+    private bool isInputLocked = false;
+
+    public void SetInputLocked(bool locked)
+    {
+        isInputLocked = locked;
+    }
+
     // --- Input System Variables ---
     private PlayerControls controls;
     private Vector2 moveInput;
@@ -78,6 +88,9 @@ public class PlayerMovement : MonoBehaviour
     {
         // Block all movement and camera look when paused
         if (MenuManager.Instance != null && MenuManager.Instance.IsPaused) return;
+
+        // Block all movement and camera look during locked moments (e.g. the ending)
+        if (isInputLocked) return;
 
         // --- Mouse Look ---
         float mouseX = lookInput.x * mouseSensitivity;
