@@ -1321,9 +1321,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 280f5c1cecd59cf418b0a7b27c64976a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1863502612}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 280f5c1cecd59cf418b0a7b27c64976a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1863502613}
   m_SourcePrefab: {fileID: 100100000, guid: 280f5c1cecd59cf418b0a7b27c64976a, type: 3}
 --- !u!4 &88249370 stripped
 Transform:
@@ -12791,9 +12788,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b5cd1c56f8d8fd478d804e332e67ada, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  currentFloor: 1
-  isAnomalyPresentOnCurrentFloor: 1
-  anomalyProbability: 0
+  currentFloor: 10
+  isAnomalyPresentOnCurrentFloor: 0
+  anomalyProbability: 0.7
   probabilityIncreasePerNormalFloor: 0.15
   player: {fileID: 530296761}
   spawnPoint: {fileID: 2145571167}
@@ -13988,28 +13985,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 0.7}
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!95 &1863502613
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1863502611}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 528fafc675870d940956d718522f43cd, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &1874949740 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2774220344278030320, guid: b4e7c27c7d3db544f818ca47951a2f7e, type: 3}
@@ -14901,7 +14876,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1945145171
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14947,7 +14922,7 @@ Transform:
   m_GameObject: {fileID: 1945145169}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 31.67, y: 0.67, z: -28.13}
+  m_LocalPosition: {x: 31.67, y: 0.67, z: -23}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14968,7 +14943,7 @@ MonoBehaviour:
   knightAnimator: {fileID: 1681837371025763462}
   knightTransform: {fileID: 4735318374736361212}
   playerTransform: {fileID: 530296761}
-  walkSpeed: 1.3
+  walkSpeed: 1.5
   normalKnightStatue: {fileID: 1863502611}
   catchDistance: 1.5
 --- !u!1001 &1945607331
@@ -63440,9 +63415,9 @@ CharacterController:
   m_Radius: 0.4
   m_SlopeLimit: 45
   m_StepOffset: 0.3
-  m_SkinWidth: 0.08
+  m_SkinWidth: 0.04
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.8, z: 0}
+  m_Center: {x: 0, y: 0.95, z: 0}
 --- !u!4 &5404013359192673809
 Transform:
   m_ObjectHideFlags: 0

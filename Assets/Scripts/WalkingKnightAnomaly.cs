@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class WalkingKnightAnomaly : MonoBehaviour
 {
+    [Header("Knight Setup")]
     public Animator knightAnimator;
     public Transform knightTransform;
     public Transform playerTransform;
@@ -20,37 +21,48 @@ public class WalkingKnightAnomaly : MonoBehaviour
     // Variables to store the original starting position
     private Vector3 originalPosition;
     private Quaternion originalRotation;
+    private bool hasSavedOriginalPosition = false;
 
-    private void Awake()
-    {
-        // Save the starting position and orientation when the scene loads
-        if (knightTransform != null)
-        {
-            originalPosition = knightTransform.position;
-            originalRotation = knightTransform.rotation;
-
-            // Grab the Character Controller component for wall collisions
-            knightController = knightTransform.GetComponent<CharacterController>();
-        }
-    }
-
-    // This runs the exact frame the GameManager turns this Anomaly Object ON
+    // This fires the exact frame the GameManager runs currentActiveAnomalyObject.SetActive(true);
     private void OnEnable()
     {
-        // HIDE the normal statue because the anomaly version is active on this floor
+        if (knightController == null && knightTransform != null)
+        {
+            knightController = knightTransform.GetComponent<CharacterController>();
+        }
+
+        // SAFEGUARD: Saves the pedestal location the very first time this anomaly is called into action
+        if (!hasSavedOriginalPosition && knightTransform != null)
+        {
+            if (knightController != null) knightController.enabled = false;
+
+            originalPosition = knightTransform.position;
+            originalRotation = knightTransform.rotation;
+            hasSavedOriginalPosition = true;
+
+            if (knightController != null) knightController.enabled = true;
+        }
+
+        // SHOW the moving walking knight variant mesh because the floor is active
+        if (knightTransform != null) knightTransform.gameObject.SetActive(true);
+
+        // HIDE the peaceful normal statue
         if (normalKnightStatue != null) normalKnightStatue.SetActive(false);
     }
 
-    // This runs the exact frame the GameManager resets the floor and turns this OFF
+    // This fires the exact frame the GameManager cleans up the floor via obj.SetActive(false);
     private void OnDisable()
     {
         isTriggered = false;
 
-        // BRING BACK the normal statue when the anomaly is gone
+        // HIDE the moving walking knight variant entirely so he isn't left standing around
+        if (knightTransform != null) knightTransform.gameObject.SetActive(false);
+
+        // BRING BACK the normal statue safely
         if (normalKnightStatue != null) normalKnightStatue.SetActive(true);
     }
 
-    // Hallway Trigger Detection (Starts the chase)
+    // Hallway Trigger Box detection zone
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && !isTriggered)
@@ -67,20 +79,20 @@ public class WalkingKnightAnomaly : MonoBehaviour
     {
         if (isTriggered && knightTransform != null && playerTransform != null)
         {
-            // 1. Calculate direction and smoothly rotate toward the player
+            // 1. Aim toward the player
             Vector3 targetDirection = playerTransform.position - knightTransform.position;
             targetDirection.y = 0;
             Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
             knightTransform.rotation = Quaternion.Slerp(knightTransform.rotation, targetRotation, Time.deltaTime * 5f);
 
-            // 2. Physics/Wall-safe movement calculation via Character Controller
+            // 2. Character-Controller wall safe movement
             Vector3 moveDirection = knightTransform.forward * walkSpeed;
             if (knightController != null)
             {
                 knightController.Move(moveDirection * Time.deltaTime);
             }
 
-            // 3. Distance Check (Catches the player)
+            // 3. Catch verification loop
             float currentDistance = Vector3.Distance(knightTransform.position, playerTransform.position);
             if (currentDistance <= catchDistance)
             {
@@ -91,26 +103,16 @@ public class WalkingKnightAnomaly : MonoBehaviour
 
     private void HandlePlayerCaught()
     {
-        Debug.Log("Player caught by the Knight! Executing penalty sequence...");
-        isTriggered = false; // Halt movement immediately
-
-        if (GameManager.Instance != null)
-        {
-            // Send the opposite of the truth to explicitly force a failure state 
-            // This resets the current floor to 10, updates displays, and teleports the player
-            bool forceWrongDecision = !GameManager.Instance.isAnomalyPresentOnCurrentFloor;
-            GameManager.Instance.MakeDecision(forceWrongDecision);
-        }
-    }
-
-    // Call this function whenever you change floors or want to turn off the anomaly manually
-    public void ResetKnight(bool shouldBePresentOnThisFloor)
-    {
+        Debug.Log("Player caught by the Knight! Resetting floor state...");
         isTriggered = false;
 
+        // Force snap him back behind the wall frame instantly before GameManager reloads layouts
         if (knightController != null) knightController.enabled = false;
-        knightTransform.position = originalPosition;
-        knightTransform.rotation = originalRotation;
+        if (knightTransform != null)
+        {
+            knightTransform.position = originalPosition;
+            knightTransform.rotation = originalRotation;
+        }
         if (knightController != null) knightController.enabled = true;
 
         if (knightAnimator != null)
@@ -119,12 +121,11 @@ public class WalkingKnightAnomaly : MonoBehaviour
             knightAnimator.Update(0f);
         }
 
-        if (knightTransform != null)
+        // Call your GameManager Instance and force a wrong decision rule layout reload
+        if (GameManager.Instance != null)
         {
-            knightTransform.gameObject.SetActive(shouldBePresentOnThisFloor);
+            bool forceWrongDecision = !GameManager.Instance.isAnomalyPresentOnCurrentFloor;
+            GameManager.Instance.MakeDecision(forceWrongDecision);
         }
-
-        // Toggling this natively handles our clean OnEnable / OnDisable swapping logic!
-        this.gameObject.SetActive(shouldBePresentOnThisFloor);
     }
 }
