@@ -1,40 +1,63 @@
 using UnityEngine;
-using UnityEngine.InputSystem; // Required for the new system
+using UnityEngine.InputSystem;
 
 public class PlayerInteractor : MonoBehaviour
 {
     [Header("Interaction Settings")]
-    public float interactRange = 3f; // Max distance to interact with objects
+    public float interactRange = 3f;
+    public float interactRadius = 0.3f; // thickness of the interaction "feeler"
+
+    [Header("UI")]
+    public InteractionPromptUI promptUI;
 
     private PlayerControls controls;
+    private IInteractable currentTarget;
 
     void Awake()
     {
         controls = new PlayerControls();
-
-        // Subscribe to the 'E' button press event
         controls.Gameplay.Interact.performed += ctx => TryInteract();
     }
 
     void OnEnable() => controls.Gameplay.Enable();
     void OnDisable() => controls.Gameplay.Disable();
 
+    void Update()
+    {
+        UpdateCurrentTarget();
+    }
+
+    private void UpdateCurrentTarget()
+    {
+        IInteractable found = null;
+
+        if (Physics.SphereCast(transform.position, interactRadius, transform.forward, out RaycastHit hit, interactRange))
+        {
+            found = hit.collider.GetComponent<IInteractable>();
+        }
+
+        if (found != currentTarget)
+        {
+            currentTarget = found;
+
+            if (promptUI != null)
+            {
+                if (currentTarget != null)
+                    promptUI.Show(currentTarget.PromptText);
+                else
+                    promptUI.Hide();
+            }
+        }
+    }
+
     private void TryInteract()
     {
-        // Shoot a ray directly from the center of the camera
-        Ray ray = new Ray(transform.position, transform.forward);
-        RaycastHit hit;
-
-        // DRAW RAY IN EDITOR: Now, if you switch to the Scene tab, you will see a red ray!
         Debug.DrawRay(transform.position, transform.forward * interactRange, Color.red, 2f);
 
-        // Check if the ray hits anything within interactRange
-        if (Physics.Raycast(ray, out hit, interactRange))
+        if (Physics.SphereCast(transform.position, interactRadius, transform.forward, out RaycastHit hit, interactRange))
         {
-            // DIAGNOSTICS: Log to the console exactly what the ray hit
-            Debug.Log($"[Raycast] Ray hit object: {hit.collider.gameObject.name}");
+            Debug.Log($"[SphereCast] Hit object: {hit.collider.gameObject.name}");
 
-            // Check if the hit object implements our strict interface
             IInteractable interactableObj = hit.collider.GetComponent<IInteractable>();
 
             if (interactableObj != null)
@@ -48,7 +71,7 @@ public class PlayerInteractor : MonoBehaviour
         }
         else
         {
-            Debug.Log("[Raycast] Empty! The ray hit nothing. You might be standing too far away.");
+            Debug.Log("[SphereCast] Empty! Standing too far away or not aimed close enough.");
         }
     }
 }

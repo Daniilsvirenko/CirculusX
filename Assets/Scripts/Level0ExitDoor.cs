@@ -5,6 +5,10 @@ using UnityEngine;
 // existing PlayerInteractor / "E" key handling picks it up automatically.
 public class Level0ExitDoor : MonoBehaviour, IInteractable
 {
+    [Header("Interaction Prompt")]
+    public string promptText = "Press E to open the door";
+    public string PromptText => promptText;
+
     public void Interact()
     {
         GameManager.Instance.TriggerWinEnding();

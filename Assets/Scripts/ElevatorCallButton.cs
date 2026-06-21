@@ -5,6 +5,10 @@ public class ElevatorCallButton : MonoBehaviour, IInteractable
     [Tooltip("Drag the parent ElevatorAnimation object here. If left empty, it will try to find it automatically.")]
     public ElevatorDoorController doorController;
 
+    [Header("Interaction Prompt")]
+    public string promptText = "Press E to call elevator";
+    public string PromptText => promptText;
+
     [Header("Audio Settings")]
     public AudioSource buttonAudioSource;
     public AudioClip clickSound;
