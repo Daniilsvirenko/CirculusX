@@ -161,18 +161,11 @@ public class WalkingKnightAnomaly : MonoBehaviour
         {
             if (door != null)
             {
-                Animation doorAnim = door.GetComponent<Animation>();
-                if (doorAnim != null && doorAnim.clip != null)
-                {
-                    doorAnim.Stop();
-                    doorAnim[doorAnim.clip.name].time = 0f;
-                    doorAnim[doorAnim.clip.name].speed = 1f;
-                    doorAnim.Sample();
-                }
-                if (door.doorAudioSource != null)
-                {
-                    door.doorAudioSource.Stop();
-                }
+                door.ResetDoors();
+            }
+            if (door.doorAudioSource != null)
+            {
+                door.doorAudioSource.Stop();
             }
         }
 

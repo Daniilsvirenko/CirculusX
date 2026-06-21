@@ -87,6 +87,7 @@ public class GameManager : MonoBehaviour
         UpdateFloorDisplay();
         GenerateFloorState();
         TeleportPlayerToStart();
+        ResetAllElevatorDoors();
     }
 
     // Called once the player correctly escapes Floor 1. Swaps the normal hallway
@@ -330,5 +331,14 @@ public class GameManager : MonoBehaviour
 
         // Generate the floor state
         GenerateFloorState();
+    }
+
+    private void ResetAllElevatorDoors()
+    {
+        ElevatorDoorController[] allDoors = FindObjectsOfType<ElevatorDoorController>();
+        foreach (ElevatorDoorController door in allDoors)
+        {
+            door.ResetDoors();
+        }
     }
 }
