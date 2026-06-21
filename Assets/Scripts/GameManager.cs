@@ -341,4 +341,31 @@ public class GameManager : MonoBehaviour
             door.ResetDoors();
         }
     }
+
+    // Fully resets the game back to its initial state (Floor 10, normal hallway).
+    // Call this when returning to the main menu after winning, so a fresh
+    // "Start" press begins a clean run instead of continuing from Floor 0.
+    public void ResetGameState()
+    {
+        isInLevel0 = false;
+        currentFloor = 10;
+        currentDynamicProbability = anomalyProbability;
+        lastActiveAnomalyObject = null;
+        currentActiveAnomalyObject = null;
+
+        if (level0Corridor != null) level0Corridor.SetActive(false);
+        if (mainHallway != null) mainHallway.SetActive(true);
+
+        UpdateFloorDisplay();
+        GenerateFloorState();
+        TeleportPlayerToStart();
+        ResetAllElevatorDoors();
+
+        // Re-enable movement, since the ending sequence locks it
+        if (player != null)
+        {
+            PlayerMovement pm = player.GetComponent<PlayerMovement>();
+            if (pm != null) pm.SetInputLocked(false);
+        }
+    }
 }

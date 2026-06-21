@@ -1,6 +1,7 @@
-using UnityEngine;
-using TMPro;
 using System.Collections;
+using TMPro;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 // Handles the final "fade to white" + closing text once the player
 // escapes through the exit door in the Delusional Corridor.
@@ -17,28 +18,77 @@ public class EndingUIController : MonoBehaviour
     public PlayerMovement playerMovement;
 
     [Header("Timing")]
-    public float fadeToWhiteDuration = 2.5f;
-    public float holdWhiteDuration = 1.0f;
-    public float textFadeInDuration = 2.0f;
+    public float fadeToWhiteDuration = 0.5f;
+    public float holdWhiteDuration = 0.5f;
+    public float lineFadeInDuration = 1.5f;
+    public float lineHoldDuration = 10.0f;
+    public float lineFadeOutDuration = 1.5f;
+    public float pauseBetweenLines = 0.5f;
 
     [Header("Text")]
-    [TextArea(3, 6)]
-    public string endingMessage =
-        "THE END\n\nThe corridor was never a place.\nIt was a thought, repeated until it broke.\nYou stopped running from it.";
+    [TextArea(2, 4)]
+    public string[] endingLines = new string[]
+    {
+        "There was no hotel.\nThere was only your mind, built into something you could walk through\u2014\na corridor, floor after floor, because facing it all at once was impossible.",
+        "Every anomaly you found wasn't a trick of the building.\nIt was a memory you'd buried, a fear you'd avoided,\na version of yourself you didn't want to look at directly.",
+        "Getting it wrong didn't reset a level.\nIt meant you weren't ready to see it yet\u2014\nso your mind sent you back to try again.",
+        "The ground floor was never a place to escape to.\nIt was the moment you finally stopped looking away."
+    };
+
+    [Header("Return To Menu")]
+    public float promptFadeInDuration = 1.0f;
+    [Tooltip("Min/max alpha for the pulsing prompt, once fully faded in.")]
+    public float pulseMinAlpha = 0.0f;
+    public float pulseMaxAlpha = 1.0f;
+    [Tooltip("How long one fade-up or fade-down half of the pulse takes.")]
+    public float pulseSpeed = 1.0f;
+    [TextArea(1, 2)]
+    public string returnPrompt = "<font=\"LiberationSans SDF\"><size=70%><color=#FF0023><lowercase>Press any key to return to the Main Menu</lowercase></color></size></font>";
 
     private bool hasPlayed = false;
+    private bool canReturnToMenu = false;
+    private Coroutine pulseCoroutine;
 
     private void Awake()
     {
-        if (whiteFadeGroup != null) whiteFadeGroup.alpha = 0f;
-        if (textGroup != null) textGroup.alpha = 0f;
+        if (whiteFadeGroup != null)
+        {
+            whiteFadeGroup.alpha = 0f;
+            whiteFadeGroup.blocksRaycasts = false;
+            whiteFadeGroup.interactable = false;
+        }
+
+        if (textGroup != null)
+        {
+            textGroup.alpha = 0f;
+            textGroup.blocksRaycasts = false;
+            textGroup.interactable = false;
+        }
+
         if (endText != null) endText.text = "";
+    }
+
+    private void Update()
+    {
+        if (!canReturnToMenu) return;
+
+        if (Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame)
+        {
+            ReturnToMainMenu();
+        }
+        else if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            ReturnToMainMenu();
+        }
     }
 
     public void PlayEnding()
     {
         if (hasPlayed) return;
         hasPlayed = true;
+
+        if (whiteFadeGroup != null) whiteFadeGroup.blocksRaycasts = true;
+        if (textGroup != null) textGroup.blocksRaycasts = true;
 
         if (playerMovement != null)
         {
@@ -66,17 +116,119 @@ public class EndingUIController : MonoBehaviour
 
         yield return new WaitForSeconds(holdWhiteDuration);
 
-        // 2. Fade in the closing text
-        if (endText != null) endText.text = endingMessage;
+        // 2. Fade each line in, hold, fade out, then move to the next
+        for (int i = 0; i < endingLines.Length; i++)
+        {
+            if (endText != null) endText.text = endingLines[i];
+            if (textGroup != null) textGroup.alpha = 0f;
+
+            // fade in
+            t = 0f;
+            while (t < lineFadeInDuration)
+            {
+                t += Time.deltaTime;
+                if (textGroup != null)
+                    textGroup.alpha = Mathf.Clamp01(t / lineFadeInDuration);
+                yield return null;
+            }
+            if (textGroup != null) textGroup.alpha = 1f;
+
+            // hold
+            yield return new WaitForSeconds(lineHoldDuration);
+
+            // fade out
+            t = 0f;
+            while (t < lineFadeOutDuration)
+            {
+                t += Time.deltaTime;
+                if (textGroup != null)
+                    textGroup.alpha = Mathf.Clamp01(1f - (t / lineFadeOutDuration));
+                yield return null;
+            }
+            if (textGroup != null) textGroup.alpha = 0f;
+
+            // pause before next line (skip after the last one)
+            if (i < endingLines.Length - 1)
+                yield return new WaitForSeconds(pauseBetweenLines);
+        }
+
+        // 3. Show the "return to menu" prompt, fade in, then pulse it
+        if (endText != null) endText.text = returnPrompt;
+        if (textGroup != null) textGroup.alpha = 0f;
 
         t = 0f;
-        while (t < textFadeInDuration)
+        while (t < promptFadeInDuration)
         {
             t += Time.deltaTime;
             if (textGroup != null)
-                textGroup.alpha = Mathf.Clamp01(t / textFadeInDuration);
+                textGroup.alpha = Mathf.Clamp01(t / promptFadeInDuration);
             yield return null;
         }
-        if (textGroup != null) textGroup.alpha = 1f;
+        if (textGroup != null) textGroup.alpha = pulseMaxAlpha;
+
+        canReturnToMenu = true;
+        pulseCoroutine = StartCoroutine(PulsePrompt());
+    }
+
+    private IEnumerator PulsePrompt()
+    {
+        while (canReturnToMenu)
+        {
+            // fade down
+            float t = 0f;
+            while (t < pulseSpeed)
+            {
+                t += Time.deltaTime;
+                if (textGroup != null)
+                    textGroup.alpha = Mathf.Lerp(pulseMaxAlpha, pulseMinAlpha, t / pulseSpeed);
+                yield return null;
+            }
+
+            // fade up
+            t = 0f;
+            while (t < pulseSpeed)
+            {
+                t += Time.deltaTime;
+                if (textGroup != null)
+                    textGroup.alpha = Mathf.Lerp(pulseMinAlpha, pulseMaxAlpha, t / pulseSpeed);
+                yield return null;
+            }
+        }
+    }
+
+    private void ReturnToMainMenu()
+    {
+        canReturnToMenu = false; // prevent double-trigger
+
+        if (pulseCoroutine != null)
+        {
+            StopCoroutine(pulseCoroutine);
+            pulseCoroutine = null;
+        }
+
+        // Fade out this ending canvas's visuals so it doesn't sit on top of the menu
+        if (whiteFadeGroup != null) whiteFadeGroup.alpha = 0f;
+        if (textGroup != null) textGroup.alpha = 0f;
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ResetGameState();
+        }
+        else
+        {
+            Debug.LogWarning("EndingUIController: GameManager.Instance is null, can't reset game state.");
+        }
+
+        if (MenuManager.Instance != null)
+        {
+            MenuManager.Instance.ShowStartMenu();
+        }
+        else
+        {
+            Debug.LogWarning("EndingUIController: MenuManager.Instance is null, can't return to menu.");
+        }
+
+        // Hide the ending canvas itself so it doesn't block input on the menu
+        gameObject.SetActive(false);
     }
 }
