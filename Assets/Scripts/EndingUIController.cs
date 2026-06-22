@@ -5,9 +5,6 @@ using UnityEngine.InputSystem;
 
 // Handles the final "fade to white" + closing text once the player
 // escapes through the exit door in the Delusional Corridor.
-// Setup: put this on a Canvas (Screen Space - Overlay) with:
-//  - a full-screen white Image, alpha 0, referenced as "whiteImage"
-//  - a TMP text ("THE END" / explanation), alpha 0, referenced as "endText"
 public class EndingUIController : MonoBehaviour
 {
     [Header("References")]
@@ -25,14 +22,17 @@ public class EndingUIController : MonoBehaviour
     public float lineFadeOutDuration = 1.5f;
     public float pauseBetweenLines = 0.5f;
 
+
     [Header("Text")]
     [TextArea(2, 4)]
     public string[] endingLines = new string[]
     {
-        "There was no hotel.\nThere was only your mind, built into something you could walk through\u2014\na corridor, floor after floor, because facing it all at once was impossible.",
+        "Congratulations on making it this far.\nThe loop is broken, and the air is finally still.\nTake a breath... you are safe now.",
+        "Because there was never a hotel.\nThere was only your mind, built into something you could walk through\u2014\na corridor, floor after floor, because facing it all at once was impossible.",
         "Every anomaly you found wasn't a trick of the building.\nIt was a memory you'd buried, a fear you'd avoided,\na version of yourself you didn't want to look at directly.",
         "Getting it wrong didn't reset a level.\nIt meant you weren't ready to see it yet\u2014\nso your mind sent you back to try again.",
-        "The ground floor was never a place to escape to.\nIt was the moment you finally stopped looking away."
+        "The ground floor was never a place to escape to.\nIt was the moment you finally stopped looking away.",
+        "Well done.\nYou faced the darkness, and you won.\nYou are finally free."
     };
 
     [Header("Return To Menu")]
@@ -86,6 +86,12 @@ public class EndingUIController : MonoBehaviour
     {
         if (hasPlayed) return;
         hasPlayed = true;
+
+        // >>> NEU: Startet die Musik genau jetzt, wenn das Finale beginnt <<<
+        if (TryGetComponent<AudioSource>(out AudioSource endingAudio))
+        {
+            endingAudio.Play();
+        }
 
         if (whiteFadeGroup != null) whiteFadeGroup.blocksRaycasts = true;
         if (textGroup != null) textGroup.blocksRaycasts = true;
@@ -204,6 +210,12 @@ public class EndingUIController : MonoBehaviour
         {
             StopCoroutine(pulseCoroutine);
             pulseCoroutine = null;
+        }
+
+        // >>> NEU: Stoppt Mozart, wenn man zurück ins Menü geht <<<
+        if (TryGetComponent<AudioSource>(out AudioSource endingAudio))
+        {
+            endingAudio.Stop();
         }
 
         // Fade out this ending canvas's visuals so it doesn't sit on top of the menu
