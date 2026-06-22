@@ -28,7 +28,7 @@ public class EndingUIController : MonoBehaviour
     public string[] endingLines = new string[]
     {
         "Congratulations on making it this far.\nThe loop is broken, and the air is finally still.\nTake a breath... you are safe now.",
-        "Because there was never a hotel.\nThere was only your mind, built into something you could walk through\u2014\na corridor, floor after floor, because facing it all at once was impossible.",
+        "There was never a hotel.\nThere was only your mind, built into something you could walk through\u2014\na corridor, floor after floor, because facing it all at once was impossible.",
         "Every anomaly you found wasn't a trick of the building.\nIt was a memory you'd buried, a fear you'd avoided,\na version of yourself you didn't want to look at directly.",
         "Getting it wrong didn't reset a level.\nIt meant you weren't ready to see it yet\u2014\nso your mind sent you back to try again.",
         "The ground floor was never a place to escape to.\nIt was the moment you finally stopped looking away.",
