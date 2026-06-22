@@ -27,7 +27,13 @@ public class MenuManager : MonoBehaviour
     }
 
     private void Start()
+
     {
+            if (TryGetComponent<AudioSource>(out AudioSource menuAudio))
+        {
+            // 2. Sagt der Musik, dass sie die globale Soundpause IGNORIEREN soll
+            menuAudio.ignoreListenerPause = true; 
+        }
         // On start, show the start menu and pause the game
         ShowStartMenu();
     }
@@ -63,6 +69,14 @@ public class MenuManager : MonoBehaviour
         Time.timeScale = 0.0001f; // Используем микро-значение вместо 0, чтобы обойти баг Input System
         AudioListener.pause = true; // Пауза для всех звуков
 
+        if (TryGetComponent<AudioSource>(out AudioSource menuAudio))
+        {
+            if (!menuAudio.isPlaying) // Nur abspielen, wenn sie nicht eh schon läuft
+            {
+                menuAudio.Play();
+            }
+        }
+
         if (menuPanel != null) menuPanel.SetActive(true);
         if (startButton != null) startButton.SetActive(true);
         if (resumeButton != null) resumeButton.SetActive(false);
@@ -77,6 +91,10 @@ public class MenuManager : MonoBehaviour
     public void OnStartButtonClicked()
     {
         GameStarted = true;
+            if (TryGetComponent<AudioSource>(out AudioSource menuAudio))
+        {
+            menuAudio.Stop();
+        }
         ResumeGame();
     }
 
